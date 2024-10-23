@@ -1,11 +1,10 @@
-import React from 'react'
 import { screen } from '@testing-library/react'
 import { vi, expect, describe, test } from 'vitest'
 import * as testUtils from './test-utils'
 
 // Mock the entire @testing-library/react module
 vi.mock('@testing-library/react', async () => {
-    const actual = await vi.importActual('@testing-library/react')
+    const actual = (await vi.importActual('@testing-library/react')) as typeof import('@testing-library/react')
     return {
         ...actual,
         render: vi.fn().mockImplementation((ui, options) => {

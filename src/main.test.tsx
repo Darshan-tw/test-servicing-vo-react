@@ -1,4 +1,3 @@
-import React from 'react'
 import { vi, expect, describe, test, beforeEach, afterEach } from 'vitest'
 import { render } from '@testing-library/react'
 import { createRoot } from 'react-dom/client'
