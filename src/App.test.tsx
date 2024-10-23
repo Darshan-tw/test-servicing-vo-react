@@ -383,6 +383,16 @@ describe('App', () => {
     expect(screen.getByText('Upload Documents')).toBeInTheDocument()
   })
 
+  it('handles API error when fetching user details', async () => {
+    vi.spyOn(axios, 'get').mockImplementationOnce(() => Promise.reject(new Error('API Error')))
+
+    render(<App />)
+
+    await waitFor(() => {
+      expect(screen.getByText(/Error: An unexpected error occurred while fetching user details/)).toBeInTheDocument()
+    })
+  })
+
   it('allows editing form fields', async () => {
     render(<App />)
 
@@ -428,33 +438,66 @@ describe('App', () => {
     })
   })
 
-  // it('confirms and submits the form', async () => {
-  //   (axios.post as Mock).mockResolvedValue({ status: 200 })
+  it('confirms and submits the form', async () => {
+    (axios.post as Mock).mockResolvedValue({ status: 200 })
 
-  //   render(<App />)
+    render(<App />)
 
-  //   await waitFor(() => {
-  //     expect(screen.getByText('Edit Member Details')).toBeInTheDocument()
-  //   })
+    await waitFor(() => {
+      expect(screen.getByText('Edit Member Details')).toBeInTheDocument()
+    })
 
-  //   // Mock file upload and form submission to get to review page
-  //   const file = new File(['hello'], 'hello.png', { type: 'image/png' })
-  //   const input = screen.getByTestId('fileUpload')
-  //   fireEvent.change(input, { target: { files: [file] } })
-  //   const submitButton = screen.getByRole('button', { name: /submit for review/i })
-  //   fireEvent.click(submitButton)
+    // Mock file upload and form submission to get to review page
+    const file = new File(['hello'], 'hello.png', { type: 'image/png' })
+    const input = screen.getByTestId('fileUpload')
+    fireEvent.change(input, { target: { files: [file] } })
+    const submitButton = screen.getByRole('button', { name: /submit for review/i })
+    fireEvent.click(submitButton)
 
-  //   await waitFor(() => {
-  //     expect(screen.getByText('Review Changes')).toBeInTheDocument()
-  //   })
+    await waitFor(() => {
+      expect(screen.getByText('Review Changes')).toBeInTheDocument()
+    })
 
-  //   // Confirm and submit
-  //   const confirmButton = screen.getByRole('button', { name: /confirm and submit/i })
-  //   fireEvent.click(confirmButton)
+    // Confirm and submit
+    const confirmButton = screen.getByRole('button', { name: /confirm and submit/i })
+    fireEvent.click(confirmButton)
 
-  //   // Check if success alert is shown
-  //   await waitFor(() => {
-  //     expect(screen.getByText('Service request created successfully.')).toBeInTheDocument()
-  //   })
-  // })
+    // Check if success alert is shown
+    await waitFor(() => {
+      expect(screen.getByText('Service request created successfully.')).toBeInTheDocument()
+    })
+  })
+
+  it('handles API error when submitting form', async () => {
+    vi.mocked(axios.post).mockRejectedValueOnce(new Error('API Error'));
+
+    render(<App />)
+
+    await waitFor(() => {
+      expect(screen.getByText('Edit Member Details')).toBeInTheDocument()
+    })
+
+    fireEvent.click(screen.getByTestId('fileUpload'))
+
+    const file = new File(['hello'], 'hello.png', { type: 'image/png' })
+    const input = screen.getByTestId('fileUpload')
+    fireEvent.change(input, { target: { files: [file] } })
+    const submitButton = screen.getByRole('button', { name: /submit for review/i })
+    fireEvent.click(submitButton)
+
+    await waitFor(() => {
+      expect(screen.getByText('Review Changes')).toBeInTheDocument()
+    })
+
+    await waitFor(() => {
+      expect(screen.getByText('Review Changes')).toBeInTheDocument()
+    })
+
+    const confirmButton = screen.getByRole('button', { name: /confirm and submit/i })
+    fireEvent.click(confirmButton)
+
+    await waitFor(() => {
+      expect(screen.getByText(/Error: Failed to submit changes/i)).toBeInTheDocument()
+    })
+  })
 })

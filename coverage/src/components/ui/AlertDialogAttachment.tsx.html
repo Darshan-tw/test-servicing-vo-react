@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">4.34% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>1/23</span>
+                <span class='fraction'>23/23</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/0</span>
+                <span class='fraction'>1/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">50% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/1</span>
+                <span class='fraction'>1/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">4.34% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>1/23</span>
+                <span class='fraction'>23/23</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -107,29 +107,29 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">14x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">&nbsp;
+<span class="cline-any cline-yes">14x</span></td><td class="text"><pre class="prettyprint lang-js">&nbsp;
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
 &nbsp;
 interface AlertDialogAttachmentProps {
@@ -140,36 +140,36 @@ interface AlertDialogAttachmentProps {
     actionLabel: string;
 }
 &nbsp;
-<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >export default function AlertDialogAttachment({ isOpen, onClose, title, description, actionLabel }: AlertDialogAttachmentProps = {</span></span>
-<span class="cstat-no" title="statement not covered" >    isOpen: false,</span>
-<span class="cstat-no" title="statement not covered" >    onClose: () =&gt; { },</span>
-<span class="cstat-no" title="statement not covered" >    title: "Alert",</span>
-<span class="cstat-no" title="statement not covered" >    description: "This is an alert dialog.",</span>
-<span class="cstat-no" title="statement not covered" >    actionLabel: "OK"</span>
-<span class="cstat-no" title="statement not covered" >}) {</span>
-<span class="cstat-no" title="statement not covered" >    return (</span>
-<span class="cstat-no" title="statement not covered" >        &lt;AlertDialog open={isOpen} onOpenChange={onClose}&gt;</span>
-<span class="cstat-no" title="statement not covered" >            &lt;AlertDialogContent&gt;</span>
-<span class="cstat-no" title="statement not covered" >                &lt;AlertDialogHeader&gt;</span>
-<span class="cstat-no" title="statement not covered" >                    &lt;AlertDialogTitle&gt;{title}&lt;/AlertDialogTitle&gt;</span>
-<span class="cstat-no" title="statement not covered" >                    &lt;AlertDialogDescription&gt;</span>
-<span class="cstat-no" title="statement not covered" >                        {description}</span>
-<span class="cstat-no" title="statement not covered" >                    &lt;/AlertDialogDescription&gt;</span>
-<span class="cstat-no" title="statement not covered" >                &lt;/AlertDialogHeader&gt;</span>
-<span class="cstat-no" title="statement not covered" >                &lt;AlertDialogFooter&gt;</span>
-<span class="cstat-no" title="statement not covered" >                    &lt;AlertDialogAction onClick={onClose}&gt;{actionLabel}&lt;/AlertDialogAction&gt;</span>
-<span class="cstat-no" title="statement not covered" >                &lt;/AlertDialogFooter&gt;</span>
-<span class="cstat-no" title="statement not covered" >            &lt;/AlertDialogContent&gt;</span>
-<span class="cstat-no" title="statement not covered" >        &lt;/AlertDialog&gt;</span>
+export default function AlertDialogAttachment({ isOpen, onClose, title, description, actionLabel }: AlertDialogAttachmentProps = {
+    isOpen: false,
+    onClose: <span class="fstat-no" title="function not covered" >() =&gt; { },</span>
+    title: "Alert",
+    description: "This is an alert dialog.",
+    actionLabel: "OK"
+}) {
+    return (
+        &lt;AlertDialog open={isOpen} onOpenChange={onClose}&gt;
+            &lt;AlertDialogContent&gt;
+                &lt;AlertDialogHeader&gt;
+                    &lt;AlertDialogTitle&gt;{title}&lt;/AlertDialogTitle&gt;
+                    &lt;AlertDialogDescription&gt;
+                        {description}
+                    &lt;/AlertDialogDescription&gt;
+                &lt;/AlertDialogHeader&gt;
+                &lt;AlertDialogFooter&gt;
+                    &lt;AlertDialogAction onClick={onClose}&gt;{actionLabel}&lt;/AlertDialogAction&gt;
+                &lt;/AlertDialogFooter&gt;
+            &lt;/AlertDialogContent&gt;
+        &lt;/AlertDialog&gt;
     )
-<span class="cstat-no" title="statement not covered" >}</span></pre></td></tr></table></pre>
+}</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-10-23T08:44:50.870Z
+                at 2024-10-23T09:32:00.030Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

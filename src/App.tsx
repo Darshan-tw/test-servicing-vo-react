@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ChangeEvent } from 'react'
+import React, { useState, useEffect, ChangeEvent, useMemo } from 'react'
 import axios from 'axios'
 import { Button } from "@/components/ui/button"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
@@ -196,7 +196,6 @@ export default function App() {
       }
     } catch (err) {
       setError('Failed to submit changes');
-      alert('Failed to submit changes. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -242,6 +241,7 @@ export default function App() {
     }
   }, [formData.loanDetails.sumAssured, formData.loanDetails.minSumAssured, formData.loanDetails.maxSumAssured])
 
+  const changedFields = useMemo(() => prepareDataForSubmission().modifiedFields, [formData, initialFormData]);
   const renderFormContent = () => (
     <div className="px-4 py-5 sm:p-6">
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Edit Member Details</h1>
@@ -302,93 +302,89 @@ export default function App() {
     return <div className="flex items-center justify-center h-screen text-red-500">Error: {error}</div>
   }
 
-  if (step === 'edit') {
-    return (
-      <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <form onSubmit={handleSubmit} className="bg-card shadow-xl rounded-lg overflow-hidden">
-            {renderFormContent()}
-            <div className="px-4 py-3 bg-muted text-right sm:px-6">
-              <Button type="submit" className="w-full sm:w-auto" disabled={!hasUploadedFile || !!sumAssuredError}>Submit for Review</Button>
-            </div>
-          </form>
+  return (
+    <>
+      {step === 'edit' && (
+        <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            <form onSubmit={handleSubmit} className="bg-card shadow-xl rounded-lg overflow-hidden">
+              {renderFormContent()}
+              <div className="px-4 py-3 bg-muted text-right sm:px-6">
+                <Button type="submit" className="w-full sm:w-auto" disabled={!hasUploadedFile || !!sumAssuredError}>Submit for Review</Button>
+              </div>
+            </form>
+          </div>
         </div>
-      </div>
-    )
-  }
+      )}
 
-  if (step === 'review') {
-    const changedFields = prepareDataForSubmission().modifiedFields;
+      {step === 'review' && (
+        <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="bg-white shadow-xl rounded-lg overflow-hidden">
+              <div className="px-4 py-5 sm:p-6">
+                <h1 className="text-3xl font-bold text-gray-900 mb-8">Review Changes</h1>
 
-    return (
-      <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="bg-white shadow-xl rounded-lg overflow-hidden">
-            <div className="px-4 py-5 sm:p-6">
-              <h1 className="text-3xl font-bold text-gray-900 mb-8">Review Changes</h1>
-
-              <div className="space-y-8">
-                <div>
-                  <h2 className="text-2xl font-semibold mb-4">Request Details</h2>
-                  {changedFields.length > 0 ? (
-                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                      {changedFields.map((field, index) => (
-                        <div key={index} className="bg-gray-50 p-4 rounded-lg">
-                          <p className="font-medium text-lg mb-2">{field.serviceRequestType} Change</p>
-                          <div className="grid grid-cols-2 gap-2">
-                            <div>
-                              <p className="font-semibold">Old Value</p>
-                              <p className="mt-1">
-                                {initialFormData.loanDetails[field.serviceRequestType as keyof typeof initialFormData.loanDetails] ||
-                                  initialFormData.memberDetails[field.serviceRequestType as keyof typeof initialFormData.memberDetails]}
-                              </p>
-                            </div>
-                            <div>
-                              <p className="font-semibold">New Value</p>
-                              <p className="mt-1">{field.newValue}</p>
+                <div className="space-y-8">
+                  <div>
+                    <h2 className="text-2xl font-semibold mb-4">Request Details</h2>
+                    {changedFields.length > 0 ? (
+                      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                        {changedFields.map((field, index) => (
+                          <div key={index} className="bg-gray-50 p-4 rounded-lg">
+                            <p className="font-medium text-lg mb-2">{field.serviceRequestType} Change</p>
+                            <div className="grid grid-cols-2 gap-2">
+                              <div>
+                                <p className="font-semibold">Old Value</p>
+                                <p className="mt-1">
+                                  {initialFormData.loanDetails[field.serviceRequestType as keyof typeof initialFormData.loanDetails] ||
+                                    initialFormData.memberDetails[field.serviceRequestType as keyof typeof initialFormData.memberDetails]}
+                                </p>
+                              </div>
+                              <div>
+                                <p className="font-semibold">New Value</p>
+                                <p className="mt-1">{field.newValue}</p>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-lg">No changes made</p>
-                  )}
-                </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-lg">No changes made</p>
+                    )}
+                  </div>
 
-                <div>
-                  <h2 className="text-2xl font-semibold mb-4">Uploaded Documents</h2>
-                  {uploadedFiles.length > 0 ? (
-
-                    <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                      {uploadedFiles.map((file, index) => (
-                        <li key={index} className="bg-gray-50 p-4 rounded-lg flex items-center">
-                          <Upload className="mr-2 h-5 w-4 text-gray-400" />
-                          <span>{file.name}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-lg">No documents uploaded</p>
-                  )}
+                  <div>
+                    <h2 className="text-2xl font-semibold mb-4">Uploaded Documents</h2>
+                    {uploadedFiles.length > 0 ? (
+                      <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                        {uploadedFiles.map((file, index) => (
+                          <li key={index} className="bg-gray-50 p-4 rounded-lg flex items-center">
+                            <Upload className="mr-2 h-5 w-4 text-gray-400" />
+                            <span>{file.name}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-lg">No documents uploaded</p>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="px-4 py-3 bg-gray-50 sm:px-6 flex justify-between">
-              <Button onClick={() => setStep('edit')} variant="outline">Edit</Button>
-              <Button onClick={handleConfirmSubmit}>Confirm and Submit</Button>
+              <div className="px-4 py-3 bg-gray-50 sm:px-6 flex justify-between">
+                <Button onClick={() => setStep('edit')} variant="outline">Edit</Button>
+                <Button onClick={handleConfirmSubmit}>Confirm and Submit</Button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    )
-  }
+      )}
 
-  return (
-    <>
       <AlertDialogAttachment
         isOpen={showAlert}
-        onClose={() => setShowAlert(false)}
+        onClose={() => {
+          setShowAlert(false);
+          // Optionally, you can add any additional actions here, such as resetting the form or navigating to a different page
+        }}
         title="Success"
         description="Service request created successfully."
         actionLabel="OK"
