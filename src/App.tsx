@@ -194,8 +194,12 @@ export default function App() {
         setStep('edit');
         setShowAlert(true);
       }
-    } catch (err) {
-      setError('Failed to submit changes');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message || 'Failed to submit changes');
+      } else {
+        setError('Failed to submit changes');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -355,7 +359,7 @@ export default function App() {
 
                   <div>
                     <h2 className="text-2xl font-semibold mb-4">Uploaded Documents</h2>
-                    {uploadedFiles.length > 0 ? (
+                    {uploadedFiles.length > 0 && (
                       <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                         {uploadedFiles.map((file, index) => (
                           <li key={index} className="bg-gray-50 p-4 rounded-lg flex items-center">
@@ -364,8 +368,6 @@ export default function App() {
                           </li>
                         ))}
                       </ul>
-                    ) : (
-                      <p className="text-lg">No documents uploaded</p>
                     )}
                   </div>
                 </div>
@@ -380,14 +382,14 @@ export default function App() {
       )}
 
       <AlertDialogAttachment
-        isOpen={showAlert}
-        onClose={() => {
-          setShowAlert(false);
-          // Optionally, you can add any additional actions here, such as resetting the form or navigating to a different page
-        }}
-        title="Success"
-        description="Service request created successfully."
-        actionLabel="OK"
+          isOpen={showAlert}
+          onClose={() => {
+            setShowAlert(false);
+            setError(null); // Clear the error message when the dialog is closed
+          }}
+          title={error ? "Error" : "Success"}
+          description={error || "Service request created successfully."}
+          actionLabel="OK"
       />
     </>
   )

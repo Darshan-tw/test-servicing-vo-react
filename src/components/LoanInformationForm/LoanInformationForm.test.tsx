@@ -46,7 +46,7 @@ describe('LoanInformationForm', () => {
         expect(screen.getByText('Risk Commencement Date')).toBeInTheDocument()
     })
 
-    it('calls onInputChange when sum assured is changed', () => {
+    it('calls onInputChange when sum assured is changed', async () => {
         render(
             <LoanInformationForm
                 loanDetails={mockLoanDetails}
@@ -121,5 +121,24 @@ describe('LoanInformationForm', () => {
         })
 
         expect(mockOnDateChange).toHaveBeenCalled()
+    })
+
+    it('displays error message when sum assured is out of range', async () => {
+        render(
+            <LoanInformationForm
+                loanDetails={mockLoanDetails}
+                onInputChange={mockOnInputChange}
+                onSelectChange={mockOnSelectChange}
+                onDateChange={mockOnDateChange}
+                sumAssuredError="Sum Assured must be between 100000 and 200000"
+            />
+        )
+
+        const sumAssuredInput = screen.getByLabelText('Sum Assured')
+        fireEvent.change(sumAssuredInput, { target: { value: '500000' } })
+
+        await waitFor(() => {
+            expect(screen.getByText('Sum Assured must be between 100000 and 200000')).toBeInTheDocument()
+        })
     })
 })
