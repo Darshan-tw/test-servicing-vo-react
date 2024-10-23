@@ -67,33 +67,6 @@ const defaultFormData: FormData = {
     email: '',
   },
 }
-// const defaultFormData: FormData = {
-//   loanDetails: {
-//     loanType: 'Home Loan',
-//     lan: 'LAN123456789',
-//     policyNumber: 'POL987654321',
-//     planNumber: 'PLAN001',
-//     panNumber: 'ABCDE1234F',
-//     originalLoanAmount: 1500000,
-//     sumAssured: 1800000,
-//     minSumAssured: 1000000,
-//     maxSumAssured: 2000000,
-//     minTerm: 5,
-//     maxTerm: 30,
-//     policyTerm: 15,
-//     riskCommencementDate: format(new Date(2023, 5, 15), 'yyyy-MM-dd'),
-//   },
-//   memberDetails: {
-//     memberNumber: 'MEM123456',
-//     title: 'Mr',
-//     name: 'John Doe',
-//     gender: 'Male',
-//     dateOfBirth: format(new Date(1985, 7, 20), 'yyyy-MM-dd'),
-//     address: '123 Main St, Anytown, ST 12345',
-//     phoneNumber: '(555) 123-4567',
-//     email: 'john.doe@example.com',
-//   },
-// }
 
 const testBankData = {
   memberBankAccount: '1234567890',
@@ -135,13 +108,6 @@ export default function App() {
       setInitialFormData(response.data)
       setFormData(response.data)
       setIsLoading(false)
-      // const response = new Promise<FormData>((resolve) =>
-      //   setTimeout(() => resolve(defaultFormData), 300)
-      // );
-      // const data = await response
-      // setInitialFormData(data)
-      // setFormData(data)
-      // setIsLoading(false)
 
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -214,7 +180,7 @@ export default function App() {
       const formDataToSend = new FormData();
 
       // Append JSON data
-      formDataToSend.append('request', JSON.stringify(changedData));
+      formDataToSend.append('request', new Blob([JSON.stringify(changedData)], { type: 'application/json' }));
 
       // Append files
       uploadedFiles.forEach((file, index) => {
@@ -222,6 +188,11 @@ export default function App() {
       });
 
       // Make the actual API call
+      // Log FormData entries
+      for (let [key, value] of formDataToSend.entries()) {
+        console.log(`${key}:`, value);
+      }
+
       const response = await axios.post(
         'http://localhost:8080/api/v1/financialService/create-service-request',
         formDataToSend,
@@ -253,18 +224,6 @@ export default function App() {
     }
 
   };
-
-
-
-  // const prepareDataForSubmission = () => {
-  //   return Object.keys(formData).reduce((acc: Record<string, unknown>, key) => {
-  //     if (JSON.stringify(formData[key as keyof FormData]) !== JSON.stringify(initialFormData[key as keyof FormData])) {
-  //       acc[`old${key.charAt(0).toUpperCase() + key.slice(1)}`] = initialFormData[key as keyof FormData];
-  //       acc[`new${key.charAt(0).toUpperCase() + key.slice(1)}`] = formData[key as keyof FormData];
-  //     }
-  //     return acc;
-  //   }, {});
-  // };
   const prepareDataForSubmission = () => {
     const modifiedFields: { serviceRequestType: string; newValue: any }[] = [];
     const addedFields = new Set<string>();
