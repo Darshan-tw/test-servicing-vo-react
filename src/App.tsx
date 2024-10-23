@@ -210,8 +210,27 @@ export default function App() {
     const changedData = prepareDataForSubmission();
     try {
       setIsLoading(true);
+      // Create FormData object
+      const formDataToSend = new FormData();
+
+      // Append JSON data
+      formDataToSend.append('request', JSON.stringify(changedData));
+
+      // Append files
+      uploadedFiles.forEach((file, index) => {
+        formDataToSend.append(`uploadedDocuments`, file);
+      });
+
       // Make the actual API call
-      const response = await axios.post('http://localhost:8080/api/v1/financialService/create-service-request', changedData);
+      const response = await axios.post(
+        'http://localhost:8080/api/v1/financialService/create-service-request',
+        formDataToSend,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
 
       console.log('Submitting data to server:', changedData);
 
@@ -232,7 +251,9 @@ export default function App() {
     } finally {
       setIsLoading(false);
     }
+
   };
+
 
 
   // const prepareDataForSubmission = () => {
@@ -274,7 +295,6 @@ export default function App() {
       policyNumber: formData.loanDetails.policyNumber,
       memberNumber: formData.memberDetails.memberNumber,
       modifiedFields: modifiedFields,
-      uploadedDocuments: uploadedFiles.map(file => file.name)
     };
   };
 
@@ -392,8 +412,8 @@ export default function App() {
                 <Input id="name" name="name" value={formData.memberDetails.name} readOnly className="mt-1" />
               </div>
               <div>
-                <Label htmlFor="gender">Gender</Label>
-                <Select name="gender" value={formData.memberDetails.gender} onValueChange={(value) => handleSelectChange('gender', value)}>
+                <Label htmlFor="gender-select">Gender</Label>
+                <Select id="gender-select" name="gender" value={formData.memberDetails.gender} onValueChange={(value) => handleSelectChange('gender', value)}>
                   <SelectTrigger className="mt-1">
                     <SelectValue />
                   </SelectTrigger>
@@ -475,7 +495,7 @@ export default function App() {
       <div className="mt-8 space-y-4">
         <h2 className="text-xl font-semibold">Upload Documents</h2>
         <p className="text-sm text-muted-foreground">Upload supporting documents (PDF, JPG, JPEG, PNG, max 100MB each)</p>
-        <Input id="fileUpload" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple onChange={handleFileUpload} />
+        <Input id="fileUpload" data-testid="file-upload" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple onChange={handleFileUpload} />
         {uploadedFiles.length > 0 && (
           <ul className="space-y-2">
             {uploadedFiles.map((file, index) => (
@@ -584,6 +604,19 @@ export default function App() {
       </div>
     )
   }
+
+  return (
+    <>
+      {/* Render the main component content here */}
+      <AlertDialogAttachment
+        isOpen={showAlert}
+        onClose={() => setShowAlert(false)}
+        title="Success"
+        description="Service request created successfully."
+        actionLabel="OK"
+      />
+    </>
+  )
 
   return null
 }

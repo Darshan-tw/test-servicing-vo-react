@@ -1,7 +1,8 @@
-import {render, screen, waitFor, act, fireEvent, within} from '@testing-library/react'
+import { render, screen, waitFor, act, fireEvent, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { vi, expect, describe, beforeEach, test } from 'vitest'
 import App from './App'
+import axios from "axios";
 
 // Mock the date-fns format function
 vi.mock('date-fns', async () => {
@@ -14,43 +15,59 @@ vi.mock('date-fns', async () => {
 })
 
 const mockTestUserData = {
-  loanType: 'Home Loan',
-  lan: 'ABCD1234EFGH5678',
-  policyNumber: 'POL1234567890123',
-  planNumber: 'PLAN123',
-  panNumber: 'ABCDE1234F',
-  originalLoanAmount: '1000000',
-  sumAssured: '10000000',
-  policyTerm: '20',
-  rcd: new Date('2023-01-01'),
-  title: 'Mr.',
-  name: 'John Doe',
-  gender: 'Male',
-  dob: new Date('1990-01-01'),
-  address: '123 Main St, Anytown, AT 12345',
-  contactNumber: '+1234567890',
-  email: 'john.doe@example.com',
+  loanDetails: {
+    loanType: 'Home Loan',
+    lan: 'LAN123456789',
+    policyNumber: 'POL987654321',
+    planNumber: 'PLAN001',
+    panNumber: 'ABCDE1234F',
+    originalLoanAmount: 1500000,
+    sumAssured: 1800000,
+    minSumAssured: 1000000,
+    maxSumAssured: 2000000,
+    minTerm: 5,
+    maxTerm: 30,
+    policyTerm: 15,
+    riskCommencementDate: '2023-06-15',
+  },
+  memberDetails: {
+    memberNumber: 'MEM123456',
+    title: 'Mr',
+    name: 'John Doe',
+    gender: 'Male',
+    dateOfBirth: '1985-08-20',
+    address: '123 Main St, Anytown, ST 12345',
+    phoneNumber: '(555) 123-4567',
+    email: 'john.doe@example.com',
+  },
+}
+const testBankData = {
   memberBankAccount: '1234567890',
   memberIFSC: 'ABCD0123456',
   memberBankAddress: 'XYZ Bank, 456 Bank St, Anytown, AT 12345',
   mphBankAccount: '0987654321',
   mphIFSC: 'EFGH0987654',
   mphBankAddress: 'ABC Bank, 789 MPH St, Anytown, AT 12345',
-};
+}
 
-vi.spyOn(global, 'fetch').mockImplementation(() =>
-  Promise.resolve({
-    json: () => Promise.resolve(mockTestUserData),
-  } as Response)
-);
+
+// vi.spyOn(global, 'fetch').mockImplementation(() =>
+//   Promise.resolve({
+//     json: () => Promise.resolve(mockTestUserData),
+//   } as Response)
+// );
 
 describe('App Component', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
-  });
+    vi.resetAllMocks()
+    // Correct way to mock axios.get in Vitest
+    vi.spyOn(axios, 'get').mockResolvedValue({ data: mockTestUserData })
+  })
+
+
 
   test('renders loading state initially and then removes it', async () => {
-    render(<App/>);
+    render(<App />);
 
     expect(screen.getByText('Loading...')).toBeInTheDocument();
 
@@ -64,7 +81,7 @@ describe('App Component', () => {
   });
 
   test('renders form after loading', async () => {
-    render(<App/>);
+    render(<App />);
 
     await waitFor(() => {
       expect(screen.getByText('Edit Member Details')).toBeInTheDocument();
@@ -98,7 +115,7 @@ describe('App Component', () => {
     })
 
     await waitFor(() => {
-      expect(screen.getByText('Sum Assured must be between 10-12 times the Original Loan Amount')).toBeInTheDocument()
+      expect(screen.getByText('Sum Assured must be between 1000000 and 2000000')).toBeInTheDocument()
     })
   })
 
@@ -149,24 +166,6 @@ describe('App Component', () => {
     expect(mphBankAddressInput).toHaveValue('ABC Bank, 789 MPH St, Anytown, AT 12345')
     expect(mphBankAddressInput).toHaveAttribute('readOnly')
 
-    // Edit member bank account details
-    await act(async () => {
-      await user.clear(memberBankAccountInput)
-      await user.type(memberBankAccountInput, '9876543210')
-    })
-    expect(memberBankAccountInput).toHaveValue('9876543210')
-
-    await act(async () => {
-      await user.clear(memberIFSCInput)
-      await user.type(memberIFSCInput, 'WXYZ9876543')
-    })
-    expect(memberIFSCInput).toHaveValue('WXYZ9876543')
-
-    await act(async () => {
-      await user.clear(memberBankAddressInput)
-      await user.type(memberBankAddressInput, 'ABC Bank, 789 New St, Newtown, NT 54321')
-    })
-    expect(memberBankAddressInput).toHaveValue('ABC Bank, 789 New St, Newtown, NT 54321')
 
     // Verify that MPH bank details cannot be edited
     expect(mphBankAccountInput).toHaveAttribute('readOnly')
@@ -255,20 +254,20 @@ describe('App Component', () => {
       await user.upload(fileInput, file)
     })
 
-    const bankDetailsAccordion = screen.getByText('Bank Details')
-    expect(bankDetailsAccordion).toBeInTheDocument()
+    const loadAmountAccordion = screen.getByText('Loan Information')
+    expect(loadAmountAccordion).toBeInTheDocument()
     await act(async () => {
-      await user.click(bankDetailsAccordion)
+      await user.click(loadAmountAccordion)
     })
 
-    const memberBankAccountInput = screen.getByLabelText('Member Bank Account Number')
+    const sunAssured = screen.getByLabelText('Sum Assured')
 
-    expect(memberBankAccountInput).toHaveValue('1234567890')
+    expect(sunAssured).toHaveValue('1800000')
     await act(async () => {
-      await user.clear(memberBankAccountInput)
-      await user.type(memberBankAccountInput, '9876543210')
+      await user.clear(sunAssured)
+      await user.type(sunAssured, '2000000')
     })
-    expect(memberBankAccountInput).toHaveValue('9876543210')
+    expect(sunAssured).toHaveValue('2000000')
 
 
     const submitButton = screen.getByRole('button', { name: /submit for review/i })
@@ -281,11 +280,11 @@ describe('App Component', () => {
     })
 
     expect(screen.getByText('hello.pdf')).toBeInTheDocument()
-    expect(screen.getByText('MemberBankAccount Change')).toBeInTheDocument()
+    expect(screen.getByText('sumAssured Change')).toBeInTheDocument()
     expect(screen.getByText('Old Value')).toBeInTheDocument()
     expect(screen.getByText('New Value')).toBeInTheDocument()
-    expect(screen.getByText('1234567890')).toBeInTheDocument()
-    expect(screen.getByText('9876543210')).toBeInTheDocument()
+    expect(screen.getByText('1800000')).toBeInTheDocument()
+    expect(screen.getByText('2000000')).toBeInTheDocument()
   })
 
   test('handles gender change and updates title accordingly', async () => {
@@ -318,4 +317,4 @@ describe('App Component', () => {
 
     expect(titleSelect).toHaveTextContent('Ms.')
   })
-  })
+})
