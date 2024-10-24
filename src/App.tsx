@@ -238,12 +238,16 @@ export default function App() {
 
   useEffect(() => {
     const sumAssured = formData.loanDetails.sumAssured
-    if (sumAssured < formData.loanDetails.minSumAssured || sumAssured > formData.loanDetails.maxSumAssured) {
+    if (sumAssured === 0 || sumAssured < formData.loanDetails.minSumAssured || sumAssured > formData.loanDetails.maxSumAssured) {
       setSumAssuredError(`Sum Assured must be between ${formData.loanDetails.minSumAssured} and ${formData.loanDetails.maxSumAssured}`)
     } else {
       setSumAssuredError('')
     }
   }, [formData.loanDetails.sumAssured, formData.loanDetails.minSumAssured, formData.loanDetails.maxSumAssured])
+
+  const isFormValid = useMemo(() => {
+    return !sumAssuredError && formData.loanDetails.sumAssured !== 0 && hasUploadedFile
+  }, [sumAssuredError, formData.loanDetails.sumAssured, hasUploadedFile])
 
   const changedFields = useMemo(() => prepareDataForSubmission().modifiedFields, [formData, initialFormData]);
   const renderFormContent = () => (
@@ -314,7 +318,7 @@ export default function App() {
             <form onSubmit={handleSubmit} className="bg-card shadow-xl rounded-lg overflow-hidden">
               {renderFormContent()}
               <div className="px-4 py-3 bg-muted text-right sm:px-6">
-                <Button type="submit" className="w-full sm:w-auto" disabled={!hasUploadedFile || !!sumAssuredError}>Submit for Review</Button>
+                <Button type="submit" className="w-full sm:w-auto" disabled={!isFormValid}>Submit for Review</Button>
               </div>
             </form>
           </div>
