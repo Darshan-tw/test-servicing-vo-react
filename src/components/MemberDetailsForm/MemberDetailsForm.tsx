@@ -6,7 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { CalendarIcon } from "lucide-react"
-import { format } from "date-fns"
+import { format, isAfter } from "date-fns"
 
 interface MemberDetails {
     memberNumber: string;
@@ -79,6 +79,7 @@ export default function MemberDetailsForm({
                             selected={new Date(memberDetails.dateOfBirth)}
                             onSelect={(date) => onDateChange('dateOfBirth', date)}
                             initialFocus
+                            disabled={(date) => isAfter(date, new Date())}
                         />
                     </PopoverContent>
                 </Popover>
